@@ -110,4 +110,29 @@ uint256 public constant MINIMUM_QUORUM = 2;
         quorumReached = totalVotes >= MINIMUM_QUORUM;
         passed = quorumReached && proposal.yesVotes > proposal.noVotes;
     }
+
+    function executeProposal(uint256 _proposalId) external {
+        require(
+            _proposalId > 0 && _proposalId <= proposalCount,
+            "Invalid proposal"
+        );
+
+        Proposal storage proposal = proposals[_proposalId];
+
+        require(
+            block.timestamp >= proposal.deadline,
+            "Voting is still active"
+        );
+        require(!proposal.executed, "Already executed");
+
+        uint256 totalVotes = proposal.yesVotes + proposal.noVotes;
+
+        require(totalVotes >= MINIMUM_QUORUM, "Quorum not reached");
+        require(
+            proposal.yesVotes > proposal.noVotes,
+            "Proposal did not pass"
+        );
+
+        proposal.executed = true;
+    }
 }
