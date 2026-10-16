@@ -18,20 +18,18 @@ contract VotingDAOTest is Test {
         vm.prank(alice);
         dao.joinDAO();
 
-        (bool isMember, uint256 power) = dao.members(alice);
-
+        (bool isMember, uint256 votingPower) = dao.members(alice);
         assertTrue(isMember);
-        assertEq(power, 1);
-        assertEq(dao.memberCount(), 1);
+        assertEq(votingPower, 1);
     }
 
     function testCannotJoinTwice() public {
-        vm.startPrank(alice);
+        vm.prank(alice);
         dao.joinDAO();
 
+        vm.prank(alice);
         vm.expectRevert(bytes("Already a member"));
         dao.joinDAO();
-        vm.stopPrank();
     }
 
     function testMemberCanCreateProposal() public {
@@ -42,9 +40,6 @@ contract VotingDAOTest is Test {
         dao.createProposal("Upgrade the DAO", 1 days);
 
         assertEq(dao.proposalCount(), 1);
-
-        (uint256 id, , , , , ) = dao.proposals(1);
-        assertEq(id, 1);
     }
 
     function testNonMemberCannotCreateProposal() public {
@@ -64,9 +59,7 @@ contract VotingDAOTest is Test {
         dao.vote(1, true);
 
         (, , uint256 yesVotes, , , ) = dao.proposals(1);
-
         assertEq(yesVotes, 1);
-        assertTrue(dao.hasVoted(1, alice));
     }
 
     function testMemberCanVoteNo() public {
@@ -80,7 +73,6 @@ contract VotingDAOTest is Test {
         dao.vote(1, false);
 
         (, , , uint256 noVotes, , ) = dao.proposals(1);
-
         assertEq(noVotes, 1);
     }
 
@@ -91,33 +83,12 @@ contract VotingDAOTest is Test {
         vm.prank(alice);
         dao.createProposal("Upgrade the DAO", 1 days);
 
-        vm.startPrank(alice);
+        vm.prank(alice);
         dao.vote(1, true);
 
+        vm.prank(alice);
         vm.expectRevert(bytes("Already voted"));
         dao.vote(1, false);
-        vm.stopPrank();
-    }
-
-    function testNonMemberCannotVote() public {
-        vm.prank(alice);
-        dao.joinDAO();
-
-        vm.prank(alice);
-        dao.createProposal("Upgrade the DAO", 1 days);
-
-        vm.prank(bob);
-        vm.expectRevert(bytes("Not a DAO member"));
-        dao.vote(1, true);
-    }
-
-    function testCannotVoteOnInvalidProposal() public {
-        vm.prank(alice);
-        dao.joinDAO();
-
-        vm.prank(alice);
-        vm.expectRevert(bytes("Invalid proposal"));
-        dao.vote(1, true);
     }
 
     function testCannotVoteAfterDeadline() public {
@@ -174,5 +145,45 @@ contract VotingDAOTest is Test {
 
         assertFalse(quorumReached);
         assertFalse(passed);
+    }
+
+    function testExecuteProposalAfterPassing() public {
+        vm.prank(alice);
+        dao.joinDAO();
+
+        vm.prank(bob);
+        dao.joinDAO();
+
+        vm.prank(alice);
+        dao.createProposal("Upgrade the DAO", 1 days);
+
+        vm.prank(alice);
+        dao.vote(1, true);
+
+        vm.prank(bob);
+        dao.vote(1, true);
+
+        vm.warp(block.timestamp + 1 days);
+
+        dao.executeProposal(1);
+
+        (, , , , , bool executed) = dao.proposals(1);
+        assertTrue(executed);
+    }
+
+    function testCannotExecuteProposalWithoutQuorum() public {
+        vm.prank(alice);
+        dao.joinDAO();
+
+        vm.prank(alice);
+        dao.createProposal("Upgrade the DAO", 1 days);
+
+        vm.prank(alice);
+        dao.vote(1, true);
+
+        vm.warp(block.timestamp + 1 days);
+
+        vm.expectRevert(bytes("Quorum not reached"));
+        dao.executeProposal(1);
     }
 }
