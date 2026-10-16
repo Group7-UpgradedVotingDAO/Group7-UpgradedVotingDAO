@@ -134,3 +134,44 @@ contract VotingDAOTest is Test {
         dao.vote(1, true);
     }
 }
+function testProposalPassesWhenQuorumReached() public {
+        vm.prank(alice);
+        dao.joinDAO();
+
+        vm.prank(bob);
+        dao.joinDAO();
+
+        vm.prank(alice);
+        dao.createProposal("Upgrade the DAO", 1 days);
+
+        vm.prank(alice);
+        dao.vote(1, true);
+
+        vm.prank(bob);
+        dao.vote(1, true);
+
+        vm.warp(block.timestamp + 1 days);
+
+        (bool quorumReached, bool passed) = dao.getProposalResult(1);
+
+        assertTrue(quorumReached);
+        assertTrue(passed);
+    }
+
+    function testProposalFailsWithoutQuorum() public {
+        vm.prank(alice);
+        dao.joinDAO();
+
+        vm.prank(alice);
+        dao.createProposal("Upgrade the DAO", 1 days);
+
+        vm.prank(alice);
+        dao.vote(1, true);
+
+        vm.warp(block.timestamp + 1 days);
+
+        (bool quorumReached, bool passed) = dao.getProposalResult(1);
+
+        assertFalse(quorumReached);
+        assertFalse(passed);
+    }

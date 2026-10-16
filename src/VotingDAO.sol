@@ -12,7 +12,7 @@ contract VotingDAO {
     }
 
     uint256 public proposalCount;
-
+uint256 public constant MINIMUM_QUORUM = 2;
     mapping(uint256 => Proposal) public proposals;
     mapping(uint256 => mapping(address => bool)) public hasVoted;
     struct Member {
@@ -90,3 +90,23 @@ contract VotingDAO {
         emit VoteCast(_proposalId, msg.sender, _support, votingPower);
     }
 }
+function getProposalResult(
+        uint256 _proposalId
+    ) external view returns (bool quorumReached, bool passed) {
+        require(
+            _proposalId > 0 && _proposalId <= proposalCount,
+            "Invalid proposal"
+        );
+
+        Proposal storage proposal = proposals[_proposalId];
+
+        require(
+            block.timestamp >= proposal.deadline,
+            "Voting is still active"
+        );
+
+        uint256 totalVotes = proposal.yesVotes + proposal.noVotes;
+
+        quorumReached = totalVotes >= MINIMUM_QUORUM;
+        passed = quorumReached && proposal.yesVotes > proposal.noVotes;
+    }
