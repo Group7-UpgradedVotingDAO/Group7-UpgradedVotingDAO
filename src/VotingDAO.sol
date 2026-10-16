@@ -21,31 +21,28 @@ contract VotingDAO {
     }
 
     mapping(address => Member) public members;
-uint256 public memberCount;
+    uint256 public memberCount;
     event MemberJoined(address indexed member, uint256 votingPower);
 
     function joinDAO() external {
         require(!members[msg.sender].isMember, "Already a member");
 
-        members[msg.sender] = Member({
-            isMember: true,
-            votingPower: 1
-        });
-memberCount++;
+        members[msg.sender] = Member({isMember: true, votingPower: 1});
+        memberCount++;
         emit MemberJoined(msg.sender, 1);
     }
-event ProposalCreated(
+    event ProposalCreated(
         uint256 indexed proposalId,
         address indexed proposer,
         string description,
         uint256 deadline
     );
-event VoteCast(
-    uint256 indexed proposalId,
-    address indexed voter,
-    bool support,
-    uint256 votingPower
-);
+    event VoteCast(
+        uint256 indexed proposalId,
+        address indexed voter,
+        bool support,
+        uint256 votingPower
+    );
     function createProposal(
         string memory _description,
         uint256 _duration
@@ -66,40 +63,30 @@ event VoteCast(
             executed: false
         });
 
-        emit ProposalCreated(
-            proposalCount,
-            msg.sender,
-            _description,
-            deadline
+        emit ProposalCreated(proposalCount, msg.sender, _description, deadline);
+    }
+    function vote(uint256 _proposalId, bool _support) external {
+        require(members[msg.sender].isMember, "Not a DAO member");
+        require(
+            _proposalId > 0 && _proposalId <= proposalCount,
+            "Invalid proposal"
         );
+        require(!hasVoted[_proposalId][msg.sender], "Already voted");
+
+        Proposal storage proposal = proposals[_proposalId];
+
+        require(block.timestamp < proposal.deadline, "Voting has ended");
+
+        uint256 votingPower = members[msg.sender].votingPower;
+
+        if (_support) {
+            proposal.yesVotes += votingPower;
+        } else {
+            proposal.noVotes += votingPower;
+        }
+
+        hasVoted[_proposalId][msg.sender] = true;
+
+        emit VoteCast(_proposalId, msg.sender, _support, votingPower);
     }
-function vote(
-    uint256 _proposalId,
-    bool _support
-) external {
-    require(members[msg.sender].isMember, "Not a DAO member");
-    require(_proposalId > 0 && _proposalId <= proposalCount, "Invalid proposal");
-    require(!hasVoted[_proposalId][msg.sender], "Already voted");
-
-    Proposal storage proposal = proposals[_proposalId];
-
-    require(block.timestamp < proposal.deadline, "Voting has ended");
-
-    uint256 votingPower = members[msg.sender].votingPower;
-
-    if (_support) {
-        proposal.yesVotes += votingPower;
-    } else {
-        proposal.noVotes += votingPower;
-    }
-
-    hasVoted[_proposalId][msg.sender] = true;
-
-    emit VoteCast(
-        _proposalId,
-        msg.sender,
-        _support,
-        votingPower
-    );
-}
 }
