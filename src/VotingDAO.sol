@@ -65,7 +65,7 @@ uint256 public constant MINIMUM_QUORUM = 2;
 
         emit ProposalCreated(proposalCount, msg.sender, _description, deadline);
     }
-    function vote(uint256 _proposalId, bool _support) external {
+   function vote(uint256 _proposalId, bool _support) external {
         require(members[msg.sender].isMember, "Not a DAO member");
         require(
             _proposalId > 0 && _proposalId <= proposalCount,
@@ -89,8 +89,8 @@ uint256 public constant MINIMUM_QUORUM = 2;
 
         emit VoteCast(_proposalId, msg.sender, _support, votingPower);
     }
-}
-function getProposalResult(
+
+    function getProposalResult(
         uint256 _proposalId
     ) external view returns (bool quorumReached, bool passed) {
         require(
@@ -110,3 +110,4 @@ function getProposalResult(
         quorumReached = totalVotes >= MINIMUM_QUORUM;
         passed = quorumReached && proposal.yesVotes > proposal.noVotes;
     }
+}

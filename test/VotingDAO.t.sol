@@ -133,8 +133,8 @@ contract VotingDAOTest is Test {
         vm.expectRevert(bytes("Voting has ended"));
         dao.vote(1, true);
     }
-}
-function testProposalPassesWhenQuorumReached() public {
+
+    function testProposalPassesWhenQuorumReached() public {
         vm.prank(alice);
         dao.joinDAO();
 
@@ -175,3 +175,4 @@ function testProposalPassesWhenQuorumReached() public {
         assertFalse(quorumReached);
         assertFalse(passed);
     }
+}
