@@ -43,7 +43,7 @@ contract VotingDAOTest is Test {
 
         assertEq(dao.proposalCount(), 1);
 
-        (uint256 id, , , , ) = dao.proposals(1);
+        (uint256 id, , , , , ) = dao.proposals(1);
         assertEq(id, 1);
     }
 
@@ -63,7 +63,7 @@ contract VotingDAOTest is Test {
         vm.prank(alice);
         dao.vote(1, true);
 
-        (, uint256 yesVotes, , , ) = dao.proposals(1);
+        (, , uint256 yesVotes, , , ) = dao.proposals(1);
 
         assertEq(yesVotes, 1);
         assertTrue(dao.hasVoted(1, alice));
@@ -79,7 +79,7 @@ contract VotingDAOTest is Test {
         vm.prank(alice);
         dao.vote(1, false);
 
-        (, , uint256 noVotes, , ) = dao.proposals(1);
+        (, , , uint256 noVotes, , ) = dao.proposals(1);
 
         assertEq(noVotes, 1);
     }
