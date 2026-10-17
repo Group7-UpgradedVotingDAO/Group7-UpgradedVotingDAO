@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Governance Hub | Group 7 DAO</title>
+    <meta name="description" content="Group 7 Upgraded Voting DAO governance dashboard">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a href="#" class="brand">
+                <span class="brand-icon">G</span>
+                <span>Governance<span class="brand-light">Hub</span></span>
+            </a>
+
+            <div class="nav-label">WORKSPACE</div>
+            <nav class="navigation">
+                <a href="#overview" class="nav-link active">
+                    <span>▦</span> Overview
+                </a>
+                <a href="#proposals" class="nav-link">
+                    <span>▤</span> Proposals
+                </a>
+                <a href="#create" class="nav-link">
+                    <span>＋</span> Create proposal
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="network-card">
+                    <span class="status-dot"></span>
+                    <div>
+                        <strong>Network</strong>
+                        <small id="network-label">Sepolia Testnet</small>
+                    </div>
+                </div>
+                <p class="sidebar-footer">GROUP 7 · WEB3 PROJECT</p>
+            </div>
+        </aside>
+
+        <main class="main-content" id="overview">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">GROUP 7 / DECENTRALIZED GOVERNANCE</p>
+                    <h1>Governance Dashboard</h1>
+                    <p class="subtitle">Your community. Your proposals. Your vote.</p>
+                </div>
+                <button class="wallet-button" id="connect-btn">
+                    <span>◈</span> Connect Wallet
+                </button>
+            </header>
+
+            <section class="welcome-banner">
+                <div class="banner-copy">
+                    <span class="banner-tag">UPGRADED VOTING DAO</span>
+                    <h2>Decisions made <span>together.</span></h2>
+                    <p>Participate in proposals and help shape the future of the DAO.</p>
+                    <a href="#proposals" class="banner-link">Explore proposals <span>→</span></a>
+                </div>
+                <div class="banner-art" aria-hidden="true">
+                    <div class="orbit orbit-one"></div>
+                    <div class="orbit orbit-two"></div>
+                    <div class="orbit-core">G7</div>
+                    <div class="orbit-node node-one">✓</div>
+                    <div class="orbit-node node-two">◇</div>
+                    <div class="orbit-node node-three">+</div>
+                </div>
+            </section>
+
+            <section class="stats-grid" aria-label="DAO statistics">
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-icon purple">♙</span>
+                        <span class="stat-caption">COMMUNITY</span>
+                    </div>
+                    <p class="stat-label">DAO Members</p>
+                    <h3 id="member-count">—</h3>
+                    <p class="stat-note">Registered members</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-icon blue">▤</span>
+                        <span class="stat-caption">GOVERNANCE</span>
+                    </div>
+                    <p class="stat-label">Total Proposals</p>
+                    <h3 id="proposal-count">—</h3>
+                    <p class="stat-note">Created on-chain</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-icon green">✓</span>
+                        <span class="stat-caption">PARTICIPATION</span>
+                    </div>
+                    <p class="stat-label">Minimum Quorum</p>
+                    <h3>2 <span class="stat-unit">votes</span></h3>
+                    <p class="stat-note">Required for a valid result</p>
+                </article>
+            </section>
+
+            <section class="content-grid">
+                <div class="panel proposals-panel" id="proposals">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">COMMUNITY DECISIONS</p>
+                            <h2>Proposals</h2>
+                        </div>
+                        <span class="live-label"><span class="status-dot"></span> On-chain</span>
+                    </div>
+
+                    <div id="proposal-list" class="proposal-list">
+                        <div class="empty-state">
+                            <div class="empty-icon">▤</div>
+                            <h3>Ready for your first proposal</h3>
+                            <p>Connect your wallet to load proposals from the DAO contract.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-column">
+                    <section class="panel create-panel" id="create">
+                        <div class="panel-heading">
+                            <div>
+                                <p class="eyebrow">HAVE AN IDEA?</p>
+                                <h2>Create a proposal</h2>
+                            </div>
+                            <span class="create-icon">＋</span>
+                        </div>
+
+                        <form id="proposal-form">
+                            <label for="proposal-description">Proposal description</label>
+                            <textarea id="proposal-description" maxlength="500"
+                                placeholder="What should the DAO decide?" required></textarea>
+
+                            <label for="proposal-duration">Voting duration</label>
+                            <select id="proposal-duration">
+                                <option value="86400">1 day</option>
+                                <option value="259200">3 days</option>
+                                <option value="604800">7 days</option>
+                            </select>
+
+                            <button type="submit" class="primary-button" id="create-proposal-btn">
+                                Create proposal <span>→</span>
+                            </button>
+                            <p class="form-hint">Requires a connected DAO member wallet.</p>
+                        </form>
+                    </section>
+
+                    <section class="info-card">
+                        <div class="info-icon">✦</div>
+                        <h3>Every vote matters.</h3>
+                        <p>DAO members can vote once per proposal. A proposal needs at least two votes and more yes votes than no votes to pass.</p>
+                    </section>
+                </div>
+            </section>
+
+            <footer class="page-footer">
+                <span>GROUP 7 · UPGRADED VOTING DAO</span>
+                <span>Built for transparent community governance.</span>
+            </footer>
+
+            <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
